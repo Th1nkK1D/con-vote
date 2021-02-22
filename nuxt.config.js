@@ -109,4 +109,8 @@ export default {
   build: {
     transpile: [/^element-ui/],
   },
+
+  env: {
+    baseUrl: process.env.CONFIG_URL,
+  },
 }

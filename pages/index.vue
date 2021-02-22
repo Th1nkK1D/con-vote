@@ -3,7 +3,7 @@
     <Header />
 
     <h1 class="title-header">
-      <span v-if="config.test">(Test)</span>โหวตผ่าน-ไม่ผ่าน 7 มติแก้รัฐธรรมนูญ
+      <span v-if="config.test">(Test)</span>{{ config.title }}
     </h1>
 
     <LiveBadge :config="config"></LiveBadge>
@@ -62,14 +62,14 @@
                 }"
               >
                 <div
-                  v-for="i in 4"
+                  v-for="i in config.stages.length"
                   :key="i"
                   class="chart"
                   :style="{ width: calPercent(con_votes[index - 1], i) }"
                 ></div>
               </div>
               <div class="legend-wrap">
-                <div v-for="i in 4" :key="i" class="legend">
+                <div v-for="i in config.stages.length" :key="i" class="legend">
                   <div class="circle"></div>
                   <p class="text">
                     {{ (con_votes[index - 1] || {})[i] || 0 }}
@@ -86,60 +86,15 @@
           <td class="full-name">
             <a :href="d.url" target="_blank">{{ d.fullname }}</a>
           </td>
-          <td>
+          <td v-for="stage in config.stages">
             <div class="circle-wrap">
               <div
-                :class="{ circle: true, 'is-fresh': d.con_1_is_fresh }"
-                :style="{ background: setColor(d.con_1) }"
+                :class="{
+                  circle: true,
+                  'is-fresh': d[`${stage.key}_is_fresh`],
+                }"
+                :style="{ background: setColor(d[stage.key]) }"
               />
-            </div>
-          </td>
-          <td>
-            <div class="circle-wrap">
-              <div
-                :class="{ circle: true, 'is-fresh': d.con_2_is_fresh }"
-                :style="{ background: setColor(d.con_2) }"
-              />
-            </div>
-          </td>
-          <td>
-            <div class="circle-wrap">
-              <div
-                :class="{ circle: true, 'is-fresh': d.con_3_is_fresh }"
-                :style="{ background: setColor(d.con_3) }"
-              />
-            </div>
-          </td>
-          <td>
-            <div class="circle-wrap">
-              <div
-                :class="{ circle: true, 'is-fresh': d.con_4_is_fresh }"
-                :style="{ background: setColor(d.con_4) }"
-              />
-            </div>
-          </td>
-          <td>
-            <div class="circle-wrap">
-              <div
-                :class="{ circle: true, 'is-fresh': d.con_5_is_fresh }"
-                :style="{ background: setColor(d.con_5) }"
-              ></div>
-            </div>
-          </td>
-          <td>
-            <div class="circle-wrap">
-              <div
-                :class="{ circle: true, 'is-fresh': d.con_6_is_fresh }"
-                :style="{ background: setColor(d.con_6) }"
-              ></div>
-            </div>
-          </td>
-          <td>
-            <div class="circle-wrap">
-              <div
-                :class="{ circle: true, 'is-fresh': d.con_7_is_fresh }"
-                :style="{ background: setColor(d.con_7) }"
-              ></div>
             </div>
           </td>
         </tr>
@@ -153,7 +108,6 @@ import _ from 'lodash'
 import { DateTime, Interval } from 'luxon'
 import LiveBadge from '@/components/LiveBadge'
 import Header from '@/components/Header'
-const CONFIG_URL = 'https://elect.in.th/con-vote/data/config.json'
 
 function isFresh(person, key) {
   const keyUpdatedAt = `${key}_updated_at`
@@ -169,25 +123,11 @@ function isFresh(person, key) {
 export default {
   components: {
     Header,
+    LiveBadge,
   },
   data() {
     return {
-      config: {
-        test: false,
-        live_vote_url: 'https://elect.in.th/con-vote/data/live_vote.json',
-        test_live_vote_url:
-          'https://elect.in.th/con-vote/data/live_vote_dev.json',
-      },
-      header: [
-        { label: 'ชื่อ', key: 'name' },
-        { label: 'ฉบับที่ 1 <br> ตั้ง สสร. เสนอโดยเพื่อไทย', key: 'con-2' },
-        { label: 'ฉบับที่ 2 <br> ตั้ง สสร. เสนอโดยรัฐบาล', key: 'con-1' },
-        { label: 'ฉบับที่ 3 <br> ยกเลิกอำนาจ ส.ว. ปฏิรูปประเทศ', key: 'con-3' },
-        { label: 'ฉบับที่ 4 <br> ยกเลิกอำนาจ ส.ว. เลือกนายกฯ', key: 'con-4' },
-        { label: 'ฉบับที่ 5 <br> ยกเลิกนิรโทษกรรม คสช.', key: 'con-5' },
-        { label: 'ฉบับที่ 6 <br> ใช้บัตรเลือกตั้ง 2 ใบ', key: 'con-6' },
-        { label: 'ฉบับที่ 7 <br> ร่างประชาชน รื้อ สร้าง ร่าง รัฐธรรมนูญใหม่', key: 'con-7' },
-      ],
+      config: {},
       // master data
       live_vote: [],
       // filtered data derived from "live_data"
@@ -195,60 +135,13 @@ export default {
       options: [],
       value: 'ทั้งหมด',
       content: '',
-      content_details: [
-        {
-          key: 'con-1',
-          title: 'ฉบับที่ 2 = ตั้ง สสร. เสนอโดยรัฐบาล',
-          content:
-            'ตั้งสภาร่างรัฐธรรมนูญ<br/>จำนวน 200 คน<br/>มาจากการเลือกตั้ง 150 คน<br/>(โดยใช้จังหวัดเป็นเขตเลือกตั้ง)<br/>และสรรหาอีก 50 คน / ห้าม<br/>แก้ไขหมวด 1 และ 2',
-        },
-        {
-          key: 'con-2',
-          title: 'ฉบับที่ 1 ##<br> = ตั้ง สสร. เสนอโดยเพื่อไทย',
-          content:
-            'ตั้งสภาร่างรัฐธรรมนูญ<br/>จำนวน 200 คน มาจาก<br/> การเลือกตั้งทั้งหมด <br/> (โดยใช้จังหวัดเป็นเขตเลือกตั้ง)<br/> / ห้ามแก้ไขหมวด 1 และ 2',
-        },
-        {
-          key: 'con-3',
-          title: 'ฉบับที่ 3 = ยกเลิกอำนาจ ส.ว. ปฏิรูปประเทศ',
-          content:
-            'ยกเลิกที่มาของวุฒิสภา<br/>ชุดพิเศษของคสช.<br/> และอำนาจในการร่วมพิจารณา<br/>ร่างกฎหมายที่ถูกยับยั้งไว้',
-        },
-        {
-          key: 'con-4',
-          title: 'ฉบับที่ 4 = ยกเลิกอำนาจ ส.ว. เลือกนายกฯ',
-          content:
-            'ให้นายกรัฐมนตรีมาจาก<br/>บัญชีรายชื่อที่พรรคการเมือง<br/>เสนอ หรือ ส.ส. บัญชีรายชื่อ<br/>หรือ ส.ส. จากพรรคที่มี ส.ส.<br/>ไม่น้อยกว่าร้อยละ 5 ',
-        },
-        {
-          key: 'con-5',
-          title: 'ฉบับที่ 5 = ยกเลิกนิรโทษกรรม คสช.',
-          content:
-            'ยกเลิกบทบัญญัติที่ให้การ<br/>รับรองประกาศ-คำสั่งคสช.<br/>และคำสั่งหัวหน้าคสช. รวมถึง<br/>การกระทำที่เกี่ยวข้องให้ชอบ<br/>ด้วยกฎหมาย',
-        },
-        {
-          key: 'con-6',
-          title: 'ฉบับที่ 6 = ใช้บัตรเลือกตั้ง 2 ใบ',
-          content:
-            'ให้ใช้ระบบเลือกตั้งแบบมีบัตร<br/>เลือกตั้งสองใบ เลือกทั้ง<br/>คน-เลือกทั้งพรรค',
-        },
-        {
-          key: 'con-7',
-          title: 'ฉบับที่ 7 = ร่างประชาชน รื้อ สร้าง ร่าง รัฐธรรมนูญใหม่',
-          content: `๐ ยกเลิกช่องทางนายกฯคนนอก และให้นายกฯ ต้องเป็น ส.ส. </br>
-              ๐ ยกเลิกที่มาและอำนาจ ส.ว.ชุดพิเศษของคสช. และให้ ส.ว. มาจากการเลือกตั้ง </br>
-              ๐ ยกเลิกแผนยุทธศาสตร์ชาติและแผนปฏิรูปที่คสช. เขียน </br>
-              ๐ ยกเลิกบทบัญญัติที่ให้การรับรองประกาศ-คำสั่งคสช. และคำสั่งหัวหน้าคสช.<br/>&emsp;รวมถึงการกระทำที่เกี่ยวข้องให้ชอบด้วยกฎหมาย </br>
-              ๐ ยกเลิกที่มาของผู้บริหารท้องถิ่นรูปแบบพิเศษที่ไม่ได้มาจากการเลือกตั้ง </br>
-              ๐ ให้ "เซ็ตซีโร่" องค์กรอิสระและศาลรัฐธรรมนูญ </br>
-              ๐ ให้การแก้ไขรัฐธรรมนูญใช้เพียงเสียงเกินกึ่งหนึ่งของสองสภา </br>
-              ๐ ให้จัดทำรัฐธรมนูญใหม่ โดย สสร. ที่มาจากการเลือกตั้งจำนวน 200`,
-        },
-      ],
       con_votes: [],
     }
   },
   computed: {
+    header() {
+      return [{ label: 'ชื่อ', key: 'name' }, ...this.config.stages]
+    },
     default_options() {
       return [
         {
@@ -319,10 +212,12 @@ export default {
     }, 30 * 1000)
   },
 
-  async asyncData({ params, $axios, config_url }) {
+  async asyncData({ $axios }) {
     // For development: Need to bypass CORS using extension
     // @see https://chrome.google.com/webstore/detail/moesif-origin-cors-change/digfbfaphojjndkpccljibejjbppifbc/related
-    const config = await $axios.$get(`${CONFIG_URL}?t=${Date.now()}`)
+    const config = await $axios.$get(
+      `${process.env.CONFIG_URL}?t=${Date.now()}`
+    )
     return { config }
   },
 
@@ -330,7 +225,9 @@ export default {
     async fetchConfig() {
       // For development: Need to bypass CORS using extension
       // @see https://chrome.google.com/webstore/detail/moesif-origin-cors-change/digfbfaphojjndkpccljibejjbppifbc/related
-      this.config = await this.$axios.$get(`${CONFIG_URL}?t=${Date.now()}`)
+      this.config = await this.$axios.$get(
+        `${process.env.CONFIG_URL}?t=${Date.now()}`
+      )
     },
 
     async fetchLive() {
@@ -343,25 +240,17 @@ export default {
         this.config,
         is_test ? 'test_live_vote_url' : 'live_vote_url'
       )
-      this.live_vote = await this.$axios.$get(`${live_data_url}?t=${Date.now()}`)
+      this.live_vote = await this.$axios.$get(
+        `${live_data_url}?t=${Date.now()}`
+      )
       // this.live_vote = await this.$axios.$get('https://elect.in.th/con-vote/data/live_vote.json')
-      const now = DateTime.local()
-      const keys = [
-        'con_1',
-        'con_2',
-        'con_3',
-        'con_4',
-        'con_5',
-        'con_6',
-        'con_7',
-      ]
       this.live_vote.forEach((person) => {
         person.type = person.team + '/' + person.party
         person.fullname = `${person.title} ${person.name} ${person.lastname}`
         person.url = `https://theyworkforus.elect.in.th/people/${person.name}-${person.lastname}`
         // calculate "fresh vote" to show as blinking effect
-        keys.forEach((con) => {
-          person[`${con}_is_fresh`] = isFresh(person, con)
+        this.config.stages.forEach(({ id }) => {
+          person[`${id}_is_fresh`] = isFresh(person, id)
         })
       })
 
@@ -433,7 +322,7 @@ export default {
     },
 
     viewDetail(key) {
-      const found = this.content_details.find((element) => element.key === key)
+      const found = this.config.stages.find((element) => element.key === key)
       if (found !== undefined) {
         return found.content
       }
@@ -674,7 +563,7 @@ export default {
       td {
         font-size: 2.4rem;
       }
-      .header .legend-wrap  {
+      .header .legend-wrap {
         // flex-direction: column;
         display: grid;
         grid-template-columns: 50% 50%;
@@ -691,7 +580,6 @@ export default {
     }
   }
 }
-
 
 @keyframes blink {
   0% {

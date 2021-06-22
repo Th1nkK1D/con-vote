@@ -48,8 +48,9 @@
             :width="index == 7 ? 500 : 200"
             trigger="hover"
             class="detail-box"
+            :disabled="!h.content"
           >
-            <p v-html="viewDetail(h.key)"></p>
+            <p v-if="h.content" v-html="h.content"></p>
             <div slot="reference">
               <div class="table-header-text" v-html="h.label"></div>
               <div
@@ -322,13 +323,6 @@ export default {
 
       const result = (value / total) * 100
       return result + '%'
-    },
-
-    viewDetail(key) {
-      const found = this.config.stages.find((element) => element.key === key)
-      if (found !== undefined) {
-        return found.content
-      }
     },
   },
   watch: {

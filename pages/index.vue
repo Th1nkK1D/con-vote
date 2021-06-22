@@ -216,7 +216,7 @@ export default {
     // For development: Need to bypass CORS using extension
     // @see https://chrome.google.com/webstore/detail/moesif-origin-cors-change/digfbfaphojjndkpccljibejjbppifbc/related
     const config = await $axios.$get(
-      `${process.env.CONFIG_URL}?t=${Date.now()}`
+      `${process.env.CONFIG_URL}/runtime?t=${Date.now()}`
     )
     return { config }
   },
@@ -226,7 +226,7 @@ export default {
       // For development: Need to bypass CORS using extension
       // @see https://chrome.google.com/webstore/detail/moesif-origin-cors-change/digfbfaphojjndkpccljibejjbppifbc/related
       this.config = await this.$axios.$get(
-        `${process.env.CONFIG_URL}?t=${Date.now()}`
+        `${process.env.CONFIG_URL}/runtime?t=${Date.now()}`
       )
     },
 

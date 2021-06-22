@@ -171,9 +171,9 @@ export default {
           total: _.filter(this.live_vote, (i) => i.team === 'ฝ่ายค้าน').length,
         },
         {
-          value: 'ฝ่ายรัฐบาล',
-          label: 'ส.ส. ฝ่ายรัฐบาล',
-          total: _.filter(this.live_vote, (i) => i.team === 'ฝ่ายรัฐบาล')
+          value: 'ฝ่ายร่วมรัฐบาล',
+          label: 'ส.ส. ฝ่ายร่วมรัฐบาล',
+          total: _.filter(this.live_vote, (i) => i.team === 'ร่วมรัฐบาล')
             .length,
         },
       ]

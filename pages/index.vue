@@ -62,17 +62,21 @@
                 }"
               >
                 <div
-                  v-for="i in config.stages.length"
-                  :key="i"
+                  v-for="voteType in vote_types"
+                  :key="voteType"
                   class="chart"
-                  :style="{ width: calPercent(con_votes[index - 1], i) }"
+                  :style="{ width: calPercent(con_votes[index - 1], voteType) }"
                 ></div>
               </div>
               <div class="legend-wrap">
-                <div v-for="i in config.stages.length" :key="i" class="legend">
+                <div
+                  v-for="voteType in vote_types"
+                  :key="voteType"
+                  class="legend"
+                >
                   <div class="circle"></div>
                   <p class="text">
-                    {{ (con_votes[index - 1] || {})[i] || 0 }}
+                    {{ (con_votes[index - 1] || {})[voteType] || 0 }}
                   </p>
                 </div>
               </div>
@@ -86,7 +90,7 @@
           <td class="full-name">
             <a :href="d.url" target="_blank">{{ d.fullname }}</a>
           </td>
-          <td v-for="stage in config.stages">
+          <td v-for="stage in config.stages" :key="stage.key">
             <div class="circle-wrap">
               <div
                 :class="{
@@ -136,6 +140,7 @@ export default {
       value: 'ทั้งหมด',
       content: '',
       con_votes: [],
+      vote_types: ['1', '2', '3', '4'],
     }
   },
   computed: {
@@ -200,12 +205,10 @@ export default {
   },
 
   async created() {
-    // Refresh data from source every 5 minutes
     setInterval(() => {
       this.fetchConfig()
     }, 5 * 60 * 1000)
 
-    // Refresh data from source every 15 seconds
     this.fetchLive()
     setInterval(() => {
       this.fetchLive()
@@ -277,10 +280,10 @@ export default {
     },
 
     setConVoteTotal() {
-      const cons = Array.from(Array(7).keys())
+      const cons = Array.from(this.config.stages.keys())
 
       this.con_votes = _.map(cons, (c, index) => {
-        let group = _.groupBy(this.table_data, `con_${index + 1}`)
+        let group = _.groupBy(this.table_data, `votelog${index + 1}`)
         group = _.omit(group, ['', '#REF!'])
         group = {
           1: group[1] || [],

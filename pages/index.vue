@@ -1,12 +1,12 @@
 <template>
   <div class="container">
-    <Header />
+    <Header>
+      <LiveBadge :config="config"></LiveBadge>
+    </Header>
 
     <h1 class="title-header">
       <span v-if="config.test">(Test)</span>{{ config.title }}
     </h1>
-
-    <LiveBadge :config="config"></LiveBadge>
 
     <div class="filter-box-wrap">
       <el-select v-model="value" placeholder="Select">
@@ -39,7 +39,7 @@
       </div>
     </div>
 
-    <div class="wrapper">
+    <div v-dragscroll class="wrapper">
       <table id="vote-log-table">
         <th v-for="(h, index) in header" :key="index" class="header">
           <el-popover
@@ -335,11 +335,13 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  margin: 0 auto;
-  max-width: 1440px;
-  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  width: 100%;
+  height: 100vh;
   text-align: center;
-  padding: 30px 5%;
+  padding: 30px 5% 0;
 }
 .title-header {
   margin-top: 60px;
@@ -418,7 +420,11 @@ export default {
   background: rgba($color: $yellow-100, $alpha: 0.5);
 }
 .wrapper {
-  margin: 40px 0;
+  margin-top: 10px;
+  max-width: 100vw;
+  overflow-x: auto;
+  cursor: grab;
+
   .circle-wrap {
     display: flex;
     align-items: center;
@@ -434,9 +440,7 @@ export default {
   }
 
   .header {
-    cursor: pointer;
     width: 150px;
-    max-width: 150px;
     .chart-warp {
       width: 100%;
       display: flex;
@@ -506,7 +510,7 @@ export default {
       background: white;
       position: sticky;
       z-index: 1;
-      top: 55px;
+      top: 0;
       box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
     }
 

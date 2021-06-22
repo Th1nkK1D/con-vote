@@ -1,7 +1,7 @@
 <template>
   <div :class="{ 'live-container': true, [`is-${statusClass}`]: true }">
     <div class="circle"></div>
-    <span class="status">{{status}}</span>
+    <span class="status">{{ status }}</span>
   </div>
 </template>
 
@@ -12,7 +12,7 @@ import { DateTime } from 'luxon'
 export default {
   props: ['config'],
   computed: {
-    status: function() {
+    status: function () {
       const { start_live, end_live } = this.config
       if (start_live && end_live) {
         const start = DateTime.fromISO(start_live)
@@ -20,26 +20,23 @@ export default {
         const now = DateTime.local()
 
         if (now <= end && now >= start) {
-          return "Live"
+          return 'Live'
         } else if (now > end) {
-          return "Live Ended"
+          return 'Live Ended'
         }
       }
-      return "Standby"
+      return 'Standby'
     },
 
-    statusClass: function() {
+    statusClass: function () {
       return _.kebabCase(this.status)
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="scss" scoped>
 .live-container {
-  position: fixed;
-  z-index: 100;
-  top: 10px;
   display: inline-flex;
   align-items: center;
   padding: 2px 10px;
@@ -78,13 +75,13 @@ export default {
 
 @keyframes blink {
   0% {
-    opacity: 1.0;
+    opacity: 1;
   }
   50% {
     opacity: 0;
   }
   100% {
-    opacity: 1.0;
+    opacity: 1;
   }
 }
 </style>

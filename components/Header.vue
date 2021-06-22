@@ -2,8 +2,11 @@
   <div class="header">
     <div class="logo-wrapper">
       <a href="https://elect.in.th/" target="_blank" rel="noopener noreferrer">
-        <img :src="elect_logo" alt="" />
+        <img :src="elect_logo" alt="ELECT" />
       </a>
+    </div>
+    <div>
+      <slot />
     </div>
     <div class="share">
       <div

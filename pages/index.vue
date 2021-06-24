@@ -114,6 +114,9 @@ import { DateTime, Interval } from 'luxon'
 import LiveBadge from '@/components/LiveBadge'
 import Header from '@/components/Header'
 
+let configUpdateInterval
+let dataUpdateInterval
+
 function isFresh(person, key) {
   const keyUpdatedAt = `${key}_updated_at`
   if (!person[key] || !person[keyUpdatedAt]) return false
@@ -206,14 +209,8 @@ export default {
   },
 
   async created() {
-    setInterval(() => {
-      this.fetchConfig()
-    }, 5 * 60 * 1000)
-
+    await this.fetchConfig()
     this.fetchLive()
-    setInterval(() => {
-      this.fetchLive()
-    }, 30 * 1000)
   },
 
   async asyncData({ $axios }) {
@@ -232,6 +229,13 @@ export default {
       this.config = await this.$axios.$get(
         `${process.env.CONFIG_URL}/runtime?t=${Date.now()}`
       )
+
+      configUpdateInterval = this.config.update_interval.config
+      dataUpdateInterval = this.config.update_interval.data
+
+      if (configUpdateInterval) {
+        setTimeout(this.fetchConfig, configUpdateInterval)
+      }
     },
 
     async fetchLive() {
@@ -264,6 +268,10 @@ export default {
       }
 
       this.setConVoteTotal()
+
+      if (dataUpdateInterval) {
+        setTimeout(this.fetchLive, dataUpdateInterval)
+      }
     },
 
     setFilter() {

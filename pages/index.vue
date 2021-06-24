@@ -19,7 +19,7 @@
         </el-option>
       </el-select>
 
-      <div class="legend-wrap">
+      <div class="legend-wrap flex-wrap">
         <div class="legend">
           <div class="circle"></div>
           <p class="text">รับ</p>
@@ -362,6 +362,11 @@ export default {
 .legend-wrap {
   display: flex;
   padding-left: 20px;
+
+  &.flex-wrap {
+    flex-wrap: wrap;
+  }
+
   .legend {
     display: flex;
     align-items: center;

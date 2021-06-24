@@ -174,7 +174,7 @@ export default {
           total: _.filter(this.live_vote, (i) => i.team === 'ฝ่ายค้าน').length,
         },
         {
-          value: 'ฝ่ายร่วมรัฐบาล',
+          value: 'ร่วมรัฐบาล',
           label: 'ส.ส. ฝ่ายร่วมรัฐบาล',
           total: _.filter(this.live_vote, (i) => i.team === 'ร่วมรัฐบาล')
             .length,
@@ -196,7 +196,7 @@ export default {
         return this.live_vote.filter((d) => {
           return d.team === this.value
         })
-      } else if (this.value === 'ฝ่ายรัฐบาล') {
+      } else if (this.value === 'ร่วมรัฐบาล') {
         return this.live_vote.filter((d) => {
           return d.team === this.value
         })

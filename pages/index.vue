@@ -34,7 +34,7 @@
         </div>
         <div class="legend">
           <div class="circle"></div>
-          <p class="text">ขาดประชุม</p>
+          <p class="text">ขาดประชุม/ไม่ประสงค์ลงคะแนน</p>
         </div>
       </div>
     </div>

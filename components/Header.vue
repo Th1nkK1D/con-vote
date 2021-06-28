@@ -56,8 +56,14 @@ export default {
           height: '40px',
         },
       ],
-      base_url: 'https://elect.in.th/con-vote/',
     }
+  },
+  computed: {
+    base_url() {
+      return location
+        ? `${location.protocol}//${location.host}/${location.pathname}`
+        : ''
+    },
   },
 }
 </script>

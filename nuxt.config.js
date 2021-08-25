@@ -28,6 +28,7 @@ export default async () => {
     modules: [
       // https://go.nuxtjs.dev/axios
       '@nuxtjs/axios',
+      'vue-plausible',
     ],
     styleResources: {
       scss: ['~/assets/styles/variables.scss'],
@@ -43,6 +44,11 @@ export default async () => {
 
     env: {
       CONFIG_URL: process.env.CONFIG_URL,
+    },
+
+    plausible: {
+      domain: 'elect.in.th/convote-24jun21',
+      apiHost: 'https://plausible.anyon.ml',
     },
 
     ...res.data,

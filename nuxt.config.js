@@ -48,7 +48,7 @@ export default async () => {
 
     plausible: {
       domain: 'elect.in.th/convote-24jun21',
-      apiHost: 'https://plausible.anyon.ml',
+      apiHost: 'analytics.punchup.world',
     },
 
     ...res.data,
